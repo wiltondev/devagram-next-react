@@ -25,7 +25,7 @@ export default function Cadastro() {
     const [estaSubmetendo, setEstaSubmetendo] = useState(false);
     const router = useRouter();
 
-   
+
     const validarFormulario = () => {
         return (
             validarNome(nome)
