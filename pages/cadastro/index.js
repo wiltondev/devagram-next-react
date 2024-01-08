@@ -26,6 +26,14 @@ export default function Cadastro() {
     const router = useRouter();
 
    
+    const validarFormulario = () => {
+        return (
+            validarNome(nome)
+            && validarEmail(email)
+            && validarSenha(senha)
+            && validarConfirmacaoSenha(senha, confirmacaoSenha)
+        );
+    }
 
     const aoSubmeter = async (e) => {
         e.preventDefault();
