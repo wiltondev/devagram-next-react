@@ -50,7 +50,7 @@ export default function Cadastro() {
             corpoReqCadastro.append("senha", senha);
 
             if (imagem?.arquivo) {
-                corpoReqCadastro.append("file", imagem.arquivo);
+                corpoReqCadastro.append("avatar", imagem.arquivo);
             }
 
             await usuarioService.cadastro(corpoReqCadastro);
