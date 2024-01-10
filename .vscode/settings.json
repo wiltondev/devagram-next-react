@@ -4,19 +4,26 @@
         "Autorizacao",
         "botao",
         "Botao",
+        "cabecalho",
         "Cabecalho",
         "confirmacao",
         "Confirmacao",
         "conteudo",
         "dependencias",
+        "descricao",
         "devagram",
         "Devaria",
+        "Divisoria",
+        "Equerda",
+        "Exibicao",
         "Formulario",
+        "icone",
         "Informacoes",
         "Nextjs",
         "publicacao",
         "Publicacao",
         "Requisicoes",
-        "rodape"
+        "rodape",
+        "Secao"
     ]
 }

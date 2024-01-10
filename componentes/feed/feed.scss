@@ -3,6 +3,20 @@
     background-color: $branco;
     margin-top: 16px;
 
+    .toggleButton {
+        background-color: $corPrimaria;
+        color: $branco;
+        border: none;
+        padding: 10px;
+        font-size: 14px;
+        cursor: pointer;
+        margin-bottom: 16px;
+
+        &:hover {
+            background-color: darken($corPrimaria, 10%);
+        }
+    }
+
     .postagem {
         .avatar {
             height: 32px;
@@ -59,7 +73,7 @@
                 align-items: center;
                 margin-bottom: 6px;
 
-                > span {
+                >span {
                     margin-right: 5px !important;
                 }
 
@@ -115,7 +129,7 @@
 
             .rodapeDaPostagem {
                 .acoesDaPostagem {
-                    > span {
+                    >span {
                         cursor: pointer;
                     }
                 }

@@ -106,7 +106,7 @@ function Publicacao() {
         <div className="paginaPublicacao largura30pctDesktop">
             <CabecalhoComAcoes
                 className={obterClassNameCabecalho()}
-                iconeEquerda={estaNaEtapaUm() ? null : imagemSetaEsquerda}
+                setaEquerda={estaNaEtapaUm() ? null : imagemSetaEsquerda}
                 textoEsquerda={obterTextoEsquerdaCabecalho()}
                 aoClicarAcaoEsquerda={aoClicarAcaoEsquerdaCabecalho}
                 elementoDireita={obterTextoDireitaCabecalho()}
