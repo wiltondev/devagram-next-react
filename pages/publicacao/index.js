@@ -2,7 +2,7 @@ import { useState } from "react";
 import { useRouter } from 'next/router';
 import Botao from "../../componentes/botao";
 import CabecalhoComAcoes from "../../componentes/cabecalhoComAcoes";
-import UploadArquivo from "../../componentes/uploadArquivo";
+import UploadImagem from "../../componentes/uploadImagem";
 import comAutorizacao from "../../hoc/comAutorizacao";
 import imagemPublicacao from '../../public/imagens/imagemPublicacao.svg';
 import imagemSetaEsquerda from '../../public/imagens/setaEsquerda.svg';
@@ -13,37 +13,41 @@ const descricaoMinima = 3;
 const feedService = new FeedService();
 
 function Publicacao() {
-    const [arquivo, setArquivo] = useState();
+    const [imagem, setImagem] = useState();
     const [descricao, setDescricao] = useState('');
-    const [inputArquivo, setInputArquivo] = useState();
+    const [inputImagem, setInputImagem] = useState();
     const [etapaAtual, setEtapaAtual] = useState(1);
     const router = useRouter();
 
     const estaNaEtapaUm = () => etapaAtual === 1;
 
     const obterTextoEsquerdaCabecalho = () => {
-        if (estaNaEtapaUm() && arquivo) {
+        if (estaNaEtapaUm() && imagem) {
             return 'Cancelar';
         }
+
         return '';
     }
 
     const obterTextoDireitaCabecalho = () => {
-        if (!arquivo) {
+        if (!imagem) {
             return '';
         }
+
         if (estaNaEtapaUm()) {
             return 'Avançar';
         }
+
         return 'Compartilhar';
     }
 
     const aoClicarAcaoEsquerdaCabecalho = () => {
         if (estaNaEtapaUm()) {
-            inputArquivo.value = null;
-            setArquivo(null);
+            inputImagem.value = null;
+            setImagem(null);
             return;
         }
+
         setEtapaAtual(1);
     }
 
@@ -52,6 +56,7 @@ function Publicacao() {
             setEtapaAtual(2);
             return;
         }
+
         publicar();
     }
 
@@ -60,6 +65,7 @@ function Publicacao() {
         if (valorAtual.length >= limiteDaDescricao) {
             return;
         }
+
         setDescricao(valorAtual);
     }
 
@@ -67,25 +73,22 @@ function Publicacao() {
         if (estaNaEtapaUm()) {
             return 'primeiraEtapa';
         }
+
         return 'segundaEtapa';
     }
 
     const publicar = async () => {
         try {
             if (!validarFormulario()) {
-                alert('A descrição precisa ter pelo menos 3 caracteres e uma imagem ou vídeo precisa estar selecionado.');
+                alert('A descrição precisa de pelo menos 3 caracteres e a imagem precisa estar selecionada.');
                 return;
             }
 
             const corpoPublicacao = new FormData();
             corpoPublicacao.append('descricao', descricao);
-            corpoPublicacao.append('file', arquivo.arquivo);
+            corpoPublicacao.append('file', imagem.arquivo);
 
-            const tipoArquivo = arquivo.isVideo ? 'video' : 'imagem'; 
-
-    
-            await feedService.fazerPublicacao(corpoPublicacao, tipoArquivo);
-
+            await feedService.fazerPublicacao(corpoPublicacao);
             router.push('/');
         } catch (error) {
             alert('Erro ao salvar publicação!');
@@ -95,7 +98,7 @@ function Publicacao() {
     const validarFormulario = () => {
         return (
             descricao.length >= descricaoMinima
-            && arquivo?.arquivo
+            && imagem?.arquivo
         );
     }
 
@@ -110,45 +113,46 @@ function Publicacao() {
                 aoClicarElementoDireita={aoClicarAcaoDireitaCabecalho}
                 titulo='Nova publicação'
             />
+
             <hr className='linhaDivisoria' />
+
             <div className="conteudoPaginaPublicacao">
-                {estaNaEtapaUm() ? (
-                    <div className="primeiraEtapa">
-                        <UploadArquivo
-                            setArquivo={setArquivo}
-                            aoSetarAReferencia={setInputArquivo}
-                            arquivoPreviewClassName={!arquivo ? 'previewArquivoPublicacao' : 'previewArquivoSelecionada'}
-                            arquivoPreview={arquivo?.preview || imagemPublicacao.src}
-                        />
-                        {arquivo?.isVideo && (
-                            <video width="100%" height="auto" controls>
-                                <source src={arquivo?.preview} type="video/mp4" />
-                                Seu navegador não suporta a tag de vídeo.
-                            </video>
-                        )}
-                        <span className="desktop textoDragAndDrop">Arraste sua foto ou vídeo aqui!</span>
-                        <Botao
-                            texto='Selecionar uma imagem ou vídeo'
-                            manipularClique={() => inputArquivo?.click()}
-                        />
-                    </div>
-                ) : (
-                    <>
-                        <div className="segundaEtapa">
-                            <UploadArquivo
-                                setArquivo={setArquivo}
-                                preview={arquivo?.preview}
+                {estaNaEtapaUm()
+                    ? (
+                        <div className="primeiraEtapa">
+                            <UploadImagem
+                                setImagem={setImagem}
+                                aoSetarAReferencia={setInputImagem}
+                                imagemPreviewClassName={!imagem ? 'previewImagemPublicacao' : 'previewImagemSelecionada'}
+                                imagemPreview={imagem?.preview || imagemPublicacao.src}
                             />
-                            <textarea
-                                rows={3}
-                                value={descricao}
-                                placeholder='Escreva uma legenda...'
-                                onChange={escreverDescricao}
-                            ></textarea>
+
+                            <span className="desktop textoDragAndDrop">Arraste sua foto aqui!</span>
+
+                            <Botao
+                                texto='Selecionar uma imagem'
+                                manipularClique={() => inputImagem?.click()}
+                            />
                         </div>
-                        <hr className='linhaDivisoria' />
-                    </>
-                )}
+                    ) : (
+                        <>
+                            <div className="segundaEtapa">
+                                <UploadImagem
+                                    setImagem={setImagem}
+                                    imagemPreview={imagem?.preview}
+                                />
+
+                                <textarea
+                                    rows={3}
+                                    value={descricao}
+                                    placeholder='Escreva uma legenda...'
+                                    onChange={escreverDescricao}
+                                ></textarea>
+                                
+                            </div>
+                            <hr className='linhaDivisoria' />
+                        </>
+                    )}
             </div>
         </div>
     );
