@@ -26,31 +26,23 @@ export default class FeedService extends DevagramApiService {
 
     // Faz uma nova publicação no feed.
     async fazerPublicacao(dadosPublicacao) {
-        return this.post('/publicacao', dadosPublicacao);
-    }
+        const isImagem = dadosPublicacao.get('file').type.startsWith('image');
+        const rota = isImagem ? '/publicacao' : '/reels';
 
-    // Carrega os reels de um usuário.
-    async carregarReels(idUsuario) {
-        let url = '/reels';
-        if (idUsuario) {
-            url += `?id=${idUsuario}`;
+        try {
+            const response = await this.post(rota, dadosPublicacao);
+
+            if (response.status === 200) {
+                // Lógica de tratamento bem-sucedido
+                console.log(`Publicação feita com sucesso: ${rota}`);
+            } else {
+                // Lógica de tratamento de erro
+                console.error(`Erro ao fazer publicação: ${response.statusText}`);
+            }
+        } catch (error) {
+            // Lógica de tratamento de erro
+            console.error('Erro ao fazer publicação:', error);
+            throw error;
         }
-
-        return this.get(url);
     }
-
-    // Adiciona um novo reel para um usuário.
-    async adicionarReel(dadosReel) {
-        return this.post('/reels', dadosReel);
-    }
-
-    // Substitui um reel existente com novos dados.
-    async substituirReel(idReel, dadosReel) {
-        return this.put(`/reels/${idReel}`, dadosReel);
-    }
-
-    // Deleta um reel existente.
-    async deletarReel(idReel) {
-        return this.delete(`/reels/${idReel}`);
-    }
-}
+}        
