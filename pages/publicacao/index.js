@@ -1,4 +1,4 @@
-import { useState } from "react";
+import React, { useState } from "react";
 import { useRouter } from 'next/router';
 import { useDropzone } from 'react-dropzone';
 import Botao from "../../componentes/botao";
@@ -6,6 +6,7 @@ import CabecalhoComAcoes from "../../componentes/cabecalhoComAcoes";
 import comAutorizacao from "../../hoc/comAutorizacao";
 import FeedService from "../../services/FeedService";
 import UploadArquivo from "../../componentes/uploadArquivo";
+import ReactPlayer from 'react-player';
 
 const limiteDaDescricao = 255;
 const descricaoMinima = 3;
@@ -32,60 +33,22 @@ function Publicacao() {
         }
     });
 
-    const obterTextoEsquerdaCabecalho = () => {
-        if (estaNaEtapaUm() && arquivo) {
-            return 'Cancelar';
-        }
+    const obterTextoEsquerdaCabecalho = () => estaNaEtapaUm() ? 'Cancelar' : '';
 
-        return '';
-    }
+    const obterTextoDireitaCabecalho = () => !arquivo ? '' : estaNaEtapaUm() ? 'Avançar' : 'Compartilhar';
 
-    const obterTextoDireitaCabecalho = () => {
-        if (!arquivo) {
-            return '';
-        }
+    const aoClicarAcaoEsquerdaCabecalho = () => estaNaEtapaUm() ? setArquivo(null) : setEtapaAtual(1);
 
-        if (estaNaEtapaUm()) {
-            return 'Avançar';
-        }
-
-        return 'Compartilhar';
-    }
-
-    const aoClicarAcaoEsquerdaCabecalho = () => {
-        if (estaNaEtapaUm()) {
-            setArquivo(null);
-            return;
-        }
-
-        setEtapaAtual(1);
-    }
-
-    const aoClicarAcaoDireitaCabecalho = () => {
-        if (estaNaEtapaUm()) {
-            setEtapaAtual(2);
-            return;
-        }
-
-        publicar();
-    }
+    const aoClicarAcaoDireitaCabecalho = () => estaNaEtapaUm() ? setEtapaAtual(2) : publicar();
 
     const escreverDescricao = (e) => {
         const valorAtual = e.target.value;
-        if (valorAtual.length >= limiteDaDescricao) {
-            return;
+        if (valorAtual.length < limiteDaDescricao) {
+            setDescricao(valorAtual);
         }
-
-        setDescricao(valorAtual);
     }
 
-    const obterClassNameCabecalho = () => {
-        if (estaNaEtapaUm()) {
-            return 'primeiraEtapa';
-        }
-
-        return 'segundaEtapa';
-    }
+    const obterClassNameCabecalho = () => estaNaEtapaUm() ? 'primeiraEtapa' : 'segundaEtapa';
 
     const publicar = async () => {
         try {
@@ -106,12 +69,7 @@ function Publicacao() {
         }
     }
 
-    const validarFormulario = () => {
-        return (
-            descricao.length >= descricaoMinima
-            && arquivo?.arquivo
-        );
-    }
+    const validarFormulario = () => descricao.length >= descricaoMinima && arquivo?.arquivo;
 
     return (
         <div className="paginaPublicacao largura30pctDesktop">
@@ -136,11 +94,7 @@ function Publicacao() {
                         )}
                         {arquivo && arquivo.tipo === 'video' && (
                             <div>
-                                <video width="320" height="240" controls>
-                                    <source src={arquivo.preview} type="video/mp4" />
-                                    Your browser does not support the video tag.
-                                </video>
-
+                                <ReactPlayer url={arquivo.preview} controls width="320px" height="240px" />
                             </div>
                         )}
                         {!arquivo && (
@@ -157,7 +111,6 @@ function Publicacao() {
                                 arquivo={arquivo}
                                 setArquivo={setArquivo}
                                 renderPreview={arquivo && arquivo.tipo === 'imagem'}
-
                             />
                             <textarea
                                 rows={5}

@@ -2,7 +2,7 @@ import { useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import Avatar from "../avatar";
-
+import ReactPlayer from "react-player"; // Adicionamos a importação do ReactPlayer
 import imgCurtir from '../../public/imagens/curtir.svg';
 import imgCurtido from '../../public/imagens/curtido.svg';
 import imgComentarioAtivo from '../../public/imagens/comentarioAtivo.svg';
@@ -20,7 +20,9 @@ export default function Postagem({
     descricao,
     comentarios,
     usuarioLogado,
-    curtidas
+    curtidas,
+    isVideo, // Nova propriedade indicando se é um vídeo ou não
+    videoUrl // Nova propriedade com o URL do vídeo
 }) {
     const [curtidasPostagem, setCurtidasPostagem] = useState(curtidas);
     const [comentariosPostagem, setComentariosPostagem] = useState(comentarios);
@@ -76,12 +78,12 @@ export default function Postagem({
         try {
             await feedService.alterarCurtida(id);
             if (usuarioLogadoCurtiuPostagem()) {
-                // tiro o usuario logado da lista de curtidas
+                // Tira o usuário logado da lista de curtidas
                 setCurtidasPostagem(
                     curtidasPostagem.filter(idUsuarioQueCurtiu => idUsuarioQueCurtiu !== usuarioLogado.id)
                 );
             } else {
-                // adiciona o usuario logado na lista de curtidas
+                // Adiciona o usuário logado na lista de curtidas
                 setCurtidasPostagem([
                     ...curtidasPostagem,
                     usuarioLogado.id
@@ -108,7 +110,11 @@ export default function Postagem({
             </Link>
 
             <div className="fotoDaPostagem">
-                <img src={fotoDoPost} alt='foto da postagem' />
+                {isVideo ? (
+                    <ReactPlayer url={videoUrl} controls width="100%" height="100%" />
+                ) : (
+                    <img src={fotoDoPost} alt='foto da postagem' />
+                )}
             </div>
 
             <div className="rodapeDaPostagem">

@@ -11,6 +11,14 @@ export default class FeedService extends DevagramApiService {
 
         return this.get(url);
     }
+    async carregarReels(idUsuario) {
+        let url = '/reels';
+        if (idUsuario) {
+            url += `?id=${idUsuario}`;
+        }
+
+        return this.get(url);
+    }
 
     // Adiciona um comentário em uma postagem específica.
     async adicionarComentario(idPostagem, comentario) {
